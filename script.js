@@ -1,41 +1,85 @@
 const container = document.getElementById('container');
 const clear = document.getElementById('clear');
+const random = document.getElementById('random');
+const grayscale = document.getElementById('grayscale');
 
-createCells();
-
-//listens for mouse over of each cell
-const cells = document.querySelectorAll('.cellDiv');
-cells.forEach(cell => { 
-    cell.addEventListener('mouseenter', changeColor)
+clear.addEventListener('click', resetGrid);
+random.addEventListener('click', () => {
+    randomColor = true;
+    grayscaleColor = false;
+});
+grayscale.addEventListener('click', () => {
+    grayscaleColor = true;
+    randomColor = false;
 });
 
-clear.addEventListener('click', clearSetGrid);
+let gridSize;
+let penColor = 'black';
+let randomColor = false;
+let r;
+let g;
+let b;
+let grayscaleColor = false;
 
-//creates cells on the grid, intial run is 16x16
-function createCells() {
-    for(let i = 0; i < 256; i++) {
+
+function getGridArea() {
+    do {
+       gridSize = prompt('Enter grid size (100 max, 2 min)');
+    }while (gridSize > 100 || gridSize < 2);
+    
+    let gridArea = gridSize * gridSize;
+    return gridArea;
+}
+
+function createGrid(gridLength) {
+    container.style.gridTemplateRows = `repeat(${gridSize},1fr)`;
+    container.style.gridTemplateColumns = `repeat(${gridSize},1fr)`;
+    
+    for(let i = 1; i <= gridLength; i++) {
         const cell = document.createElement('div');
-        cell.classList.add('cellDiv')
+        cell.classList.add('cellDiv');
         container.appendChild(cell);
     }
+    addListeners();
 }
 
-function changeColor(event) {
-    event.target.style.backgroundColor = 'black';
+function addListeners () {
+    const boxes = document.querySelectorAll('.cellDiv');
+    boxes.forEach(box => { 
+    box.addEventListener('mouseenter', draw)
+});
 }
 
-//clears current grid and asks user for new grid size
-function clearSetGrid() {
-    cells.forEach(cell => cell.style.backgroundColor = 'white')
-    let gridSize = 0;
-    while(gridSize >100 || gridSize < 2){
-        gridSize = prompt('Enter desired grid size: (100 max, 2 min)');
+function draw(event) {
+    if(randomColor) {
+        r = Math.floor(Math.random()*256);
+        g = Math.floor(Math.random()*256);
+        b = Math.floor(Math.random()*256);
+        penColor = `rgb(${r}, ${g}, ${b})`;
     }
-    
-    return gridSize;
+
+    if(grayscaleColor) {
+        //code here for grayscale
+    }
+    event.target.style.backgroundColor = `${penColor}`;
 }
 
-//todo: seperate initial grid size from new size coming soon
-//todo: button for random rbg value on each mouse over event
+function resetGrid() {
+    //remove listeners, removes divs, runs new grid creation
+    const boxes = document.querySelectorAll('.cellDiv');
+    boxes.forEach(box => { 
+    box.removeEventListener('mouseenter', draw)
+    });    
+
+    while(container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+    createGrid(getGridArea());
+   
+}
+
+//inital grid creation call
+createGrid(getGridArea());
+
 //todo: button for greyscale 10% blacker each pass over
 //todo: further additional features
