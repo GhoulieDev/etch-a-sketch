@@ -14,13 +14,10 @@ grayscale.addEventListener('click', () => {
 });
 
 let gridSize;
-let penColor = 'black';
+let penColor = `rgba(0, 0, 0, 1)`;
 let randomColor = false;
-let r;
-let g;
-let b;
+let r, g, b;
 let grayscaleColor = false;
-
 
 function getGridArea() {
     do {
@@ -38,6 +35,7 @@ function createGrid(gridLength) {
     for(let i = 1; i <= gridLength; i++) {
         const cell = document.createElement('div');
         cell.classList.add('cellDiv');
+        cell.style.backgroundColor = 'rgba(255, 255, 255, 1)';
         container.appendChild(cell);
     }
     addListeners();
@@ -55,11 +53,24 @@ function draw(event) {
         r = Math.floor(Math.random()*256);
         g = Math.floor(Math.random()*256);
         b = Math.floor(Math.random()*256);
-        penColor = `rgb(${r}, ${g}, ${b})`;
+        penColor = `rgba(${r}, ${g}, ${b}, 1)`;
     }
 
     if(grayscaleColor) {
-        //code here for grayscale
+        let currentColor = event.target.style.backgroundColor;
+        //if current color is black, dont do anything
+        if (currentColor == 'rgb(0, 0, 0)') {
+            return;
+        }else if (currentColor.indexOf('a') != -1) {
+        //if current cell has an alpha value get it and increase it by 10% 
+            let getCurrentOpacity = Number(currentColor.slice(-4, -1));
+            if (getCurrentOpacity <= 0.9) {
+                penColor = `rgba(0, 0, 0, ${getCurrentOpacity + 0.1})`
+            }
+        }else{
+        //if not black cell, and doesnt have an alpha, set it now
+            penColor = 'rgba(0, 0, 0, 0.1)';
+        }
     }
     event.target.style.backgroundColor = `${penColor}`;
 }
@@ -78,8 +89,6 @@ function resetGrid() {
    
 }
 
-//inital grid creation call
 createGrid(getGridArea());
 
-//todo: button for greyscale 10% blacker each pass over
-//todo: further additional features
+

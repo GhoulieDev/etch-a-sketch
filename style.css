@@ -1,3 +1,7 @@
+body {
+    background-color: lightseagreen;
+}
+
 #container {
     display: grid;
     background-color: gray;
@@ -13,9 +17,8 @@
     margin: 30px 0;
 }
 
-.cellDiv{
-    background-color: white;
-    outline: 1px solid gray;
+.grid-lines{
+    outline: 1px solid white; 
     
 }
 
