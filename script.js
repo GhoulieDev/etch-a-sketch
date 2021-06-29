@@ -1,14 +1,25 @@
 const container = document.getElementById('container');
+const resizeGrid = document.getElementById('resize-grid');
+const gridLines = document.getElementById('grid-lines');
 const clear = document.getElementById('clear');
+const eraser = document.getElementById('eraser');
 const black = document.getElementById('black');
 const picker = document.getElementById('picker');
 const random = document.getElementById('random');
 const grayscale = document.getElementById('grayscale');
-const gridLines = document.getElementById('grid-lines');
+
 picker.value = '#000000';
 
-clear.addEventListener('click', resetGrid);
+resizeGrid.addEventListener('click', resetGrid);
+
+clear.addEventListener('click', () => {
+    const cells = document.querySelectorAll('.cellDiv');
+    cells.forEach(cell => { 
+    cell.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+    });
+});
 black.addEventListener('click', () => {
+    defaultBlack = true;
     randomColor = false;
     grayscaleColor = false;
     pickerBool = false;
@@ -19,16 +30,22 @@ picker.addEventListener('change', event => {
     pickerBool = true;
     randomColor = false;
     grayscaleColor = false;
+    eraserBool = false;
+    defaultBlack = false;
 });
 random.addEventListener('click', () => {
     randomColor = true;
     grayscaleColor = false;
     pickerBool = false;
+    eraserBool = false;
+    defaultBlack = false;
 });
 grayscale.addEventListener('click', () => {
     grayscaleColor = true;
     randomColor = false;
     pickerBool = false;
+    eraserBool = false;
+    defaultBlack = false;
     picker.value = '#b2b2b2';
 });
 gridLines.addEventListener('click', () => {
@@ -37,14 +54,24 @@ gridLines.addEventListener('click', () => {
     box.classList.toggle('grid-lines');
     });    
 });
+eraser.addEventListener('click', () => {
+    picker.value = '#FFFFFF';
+    eraserBool = true;
+    grayscaleColor = false;
+    randomColor = false;
+    pickerBool = false;
+    defaultBlack = false;
+    penColor = 'rgba(255, 255, 255, 1)';
+})
 
 let gridSize;
 let penColor = `rgba(0, 0, 0, 1)`;
+let defaultBlack = true;
 let randomColor = false;
 let r, g, b;
 let grayscaleColor = false;
 let pickerBool = false;
-
+let eraserBool = false;
 
 function getGridArea() {
     do {
@@ -70,16 +97,16 @@ function createGrid(gridLength) {
 }
 
 function addListeners () {
-    const boxes = document.querySelectorAll('.cellDiv');
-    boxes.forEach(box => { 
-    box.addEventListener('mouseenter', draw)
+    const cells = document.querySelectorAll('.cellDiv');
+    cells.forEach(cell => { 
+    cell.addEventListener('mouseenter', draw);
 });
 }
 
 function draw(event) {
     
-    if(!pickerBool) {
-        penColor = 'rgb(0, 0, 0)';
+    if(defaultBlack) {
+        penColor = 'rgba(0, 0, 0, 1)';
     }
     
     if(randomColor) {
@@ -87,7 +114,6 @@ function draw(event) {
         g = Math.floor(Math.random()*256);
         b = Math.floor(Math.random()*256);
         penColor = `rgb(${r}, ${g}, ${b})`;
-        
     }
 
     if(grayscaleColor) {
@@ -107,31 +133,26 @@ function draw(event) {
         }
     }
     event.target.style.backgroundColor = `${penColor}`;
-    
 }
 
 function resetGrid() {
     //remove listeners, removes divs, runs new grid creation
-    const boxes = document.querySelectorAll('.cellDiv');
-    boxes.forEach(box => { 
-    box.removeEventListener('mouseenter', draw);
+    const cells = document.querySelectorAll('.cellDiv');
+    cells.forEach(cell => { 
+    cell.removeEventListener('mouseenter', draw);
     });    
 
     while(container.firstChild) {
         container.removeChild(container.firstChild);
     }
     createGrid(getGridArea());
-   
 }
-
+//initial grid creation on page load
 createGrid(getGridArea());
 
-//set a picker value color when random is selected
-//grid turns off after clear is pressed???
-//seperate clear grid and set grid size
-//eraser
-//background color picker
-//grid size slider?
-//tidy up code and design css
+
+
+
+
 
 
